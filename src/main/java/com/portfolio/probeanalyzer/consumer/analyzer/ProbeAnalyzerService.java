@@ -45,33 +45,43 @@ public class ProbeAnalyzerService {
     private String buildPrompt(ProbeResult probe) {
         return String.format(
                 """
-        You are a strict classification model.
-        You will receive probes from Storm Topologies, Services health checks, and other monitoring systems.
-        Your task is to classify the probe data into one of the following categories: OK, WARNING, ERROR.
-        Based on your knowledge, you should analyze the probe data and provide the classification.
-        For example, if the probe status is INACTIVE it means the service is down, so the classification should be ERROR.
-        But if the probe status is ACTIVE, it means the service is up and running, so the classification should be OK.
-        Other statuses like KILLED, BALANCING, means that the service is in a transitional state, so the classification should be WARNING.
-
-        The probe data is:
-        %s
-
-        Output exactly this format:
-          probeId: <the probe id>
-          classification: <OK | WARNING | ERROR>
-          reason: <the reason for the classification, only if ERROR>
+                You are a strict classification model.
+                You will receive probes from Storm Topologies, Health Checks, or other monitoring systems.
+                Your task is to classify the probe data into one of the following categories:
+                  - OK
+                  - WARNING
+                  - ERROR
         
-        Do not include any extra text.
-        """,
+                Classification rules in plain English:
+                - If type=STORM and status=ACTIVE => classification=OK
+                - If type=STORM and status=INACTIVE => classification=ERROR
+                - If type=STORM and status=BALANCING or KILLED => classification=WARNING
+                - If type=HEALTH_CHECK and status=UP or health=true => classification=OK
+                - if type=HEALTH_CHECK and status=DOWN or health=false => classification=ERROR
+        
+                When classification is ERROR, provide a short reason in the "reason" field
+                (e.g. "status=INACTIVE", "unhealthy check", etc.). If classification is OK or WARNING,
+                do not include a reason or set it to an empty string.
+        
+                The probe data is:
+                %s
+        
+                Output EXACTLY in this format (no extra text or lines):
+        
+                probeId: <the probe id>
+                probeType: <the probe type>
+                classification: <OK | WARNING | ERROR>
+                reason: <short reason only if classification=ERROR>
+                """,
                 probe.toString()
         );
     }
+
 
     private String callOllama(String prompt) throws Exception {
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(ollamaApiUrl);
 
-        // Create request body using Jackson
         Map<String, Object> requestBodyMap = new HashMap<>();
         requestBodyMap.put("model", model);
         requestBodyMap.put("prompt", prompt);

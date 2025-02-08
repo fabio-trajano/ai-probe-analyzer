@@ -1,66 +1,34 @@
 package com.portfolio.probeanalyzer.producer.probe;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ProbeResult {
-    @JsonProperty("id")
-    private String id;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-    @JsonProperty("name")
-    private String name;
+/**
+ * Base class for all probe results.
+ */
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,         // store subtype info as a "name"
+        include = JsonTypeInfo.As.PROPERTY, // put it in a JSON property
+        property = "type"                   // the JSON field: "type": "STORM"/"HEALTHCHECK"/etc.
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = StormProbeResult.class, name = "STORM"),
+        @JsonSubTypes.Type(value = HealthCheckProbeResult.class, name = "HEALTHCHECK")
+})
+public abstract class ProbeResult {
 
-    @JsonProperty("status")
-    private String status;
+    private long timestamp;
 
-    @JsonProperty("uptime")
-    private String uptime;
+    public ProbeResult() {
+        this.timestamp = System.currentTimeMillis();
+    }
 
-    @JsonProperty("uptimeSeconds")
-    private long uptimeSeconds;
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-    @JsonProperty("tasksTotal")
-    private int tasksTotal;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
-    @JsonProperty("workersTotal")
-    private int workersTotal;
-
-    @JsonProperty("executorsTotal")
-    private int executorsTotal;
-
-    @JsonProperty("replicationCount")
-    private int replicationCount;
-
-    @JsonProperty("requestedMemOnHeap")
-    private int requestedMemOnHeap;
-
-    @JsonProperty("requestedMemOffHeap")
-    private int requestedMemOffHeap;
-
-    @JsonProperty("requestedTotalMem")
-    private int requestedTotalMem;
-
-    @JsonProperty("requestedCpu")
-    private int requestedCpu;
-
-    @JsonProperty("assignedMemOnHeap")
-    private int assignedMemOnHeap;
-
-    @JsonProperty("assignedMemOffHeap")
-    private int assignedMemOffHeap;
-
-    @JsonProperty("assignedTotalMem")
-    private int assignedTotalMem;
-
-    @JsonProperty("assignedCpu")
-    private int assignedCpu;
-
-    @JsonProperty("schedulerDisplayResource")
-    private boolean schedulerDisplayResource;
 }

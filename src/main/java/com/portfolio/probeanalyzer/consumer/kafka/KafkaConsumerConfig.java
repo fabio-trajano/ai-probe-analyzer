@@ -25,16 +25,15 @@ public class KafkaConsumerConfig {
     @Bean
     public ConsumerFactory<String, ProbeResult> consumerFactory() {
         JsonDeserializer<ProbeResult> jsonDeserializer = new JsonDeserializer<>(ProbeResult.class);
-        jsonDeserializer.setRemoveTypeHeaders(true);
+        jsonDeserializer.setRemoveTypeHeaders(false);
         jsonDeserializer.addTrustedPackages("com.portfolio.probeanalyzer.producer.probe");
-        jsonDeserializer.ignoreTypeHeaders();
 
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "ai-probe-analyzer-group");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false); // Manual offset commit
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), jsonDeserializer);
