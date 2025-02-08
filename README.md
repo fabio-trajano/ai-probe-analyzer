@@ -74,8 +74,12 @@ This will:
 - Consume them from Kafka.
 - Call Ollama to classify each probe.
 
+5. **Check** Logs:
 
-  - Check Logs:
-
-You should see logs indicating “Probe sent successfully” from the producer.
+- You should see logs indicating “Probe sent successfully” from the producer.
 Then logs from the consumer showing “Received probe” and “Analysis Result: …”.
+
+
+## License
+
+This project is licensed under the terms of the [MIT License](LICENSE).
