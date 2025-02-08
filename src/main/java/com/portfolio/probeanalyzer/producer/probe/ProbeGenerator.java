@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ProbeGenerator {
     private static final List<String> STATUSES = List.of(
-            "ACTIVE", "KILLED", "ACTIVE", "BALANCING", "ACTIVE", "INACTIVE", "ACTIVE"
+            "ACTIVE", "KILLED", "ACTIVE", "BALANCING", "ACTIVE", "INACTIVE"
     );
 
     private static final List<String> TOPOLOGY_NAMES = List.of(

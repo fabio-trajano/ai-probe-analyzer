@@ -3,9 +3,12 @@ package com.portfolio.probeanalyzer.producer.probe;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
-
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProbeResult {
     @JsonProperty("id")
     private String id;
